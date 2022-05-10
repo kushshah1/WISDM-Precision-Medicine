@@ -1,0 +1,111 @@
+---
+title: "Data Exploration"
+author: "Kushal Shah"
+date: "3/10/2022"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+# library(lubridate) # has functions like year(), etc. if needed
+select <- dplyr::select
+
+source("scripts/readin.R")
+```
+
+## DiabSocioEcon
+
+```{r}
+# 61 without annual income information provided, which matches paper (they had 142/203 with annual income provided)
+```
+
+
+## DeviceCGM
+
+```{r}
+# n=10882788: 10882788 / 203 (patients) * 5 (minutes for each measurement) / 1440 (mins/day) = 186 days of CGM/patient?
+# This probably incorporates the extension study data - only then it would make sense
+```
+
+## gluIndicesRCT
+
+```{r}
+# Glucose Outcome Indices
+# n=1197: 200 patients * 2 periods (baseline & f/u) * 3 (overall/night/day) = 1200
+
+gluIndicesRCT_BGM_Baseline <- gluIndicesRCT %>%
+  filter(TrtGroup == "BGM", period == "1) Baseline", time == "1) Overall") # length 100 (expected)
+
+gluIndicesRCT_BGM_FU <- gluIndicesRCT %>%
+  filter(TrtGroup == "BGM", period == "2) Follow-up (26 week)", time == "1) Overall") # length 94 (96 expected)
+
+gluIndicesRCT_CGM_Baseline <- gluIndicesRCT %>%
+  filter(TrtGroup == "CGM", period == "1) Baseline", time == "1) Overall") # length 103 (expected)
+
+gluIndicesRCT_CGM_FU <- gluIndicesRCT %>%
+  filter(TrtGroup == "CGM", period == "2) Follow-up (26 week)", time == "1) Overall") # length 102 (expected)
+
+median(gluIndicesRCT_BGM_Baseline$gluBelow70)
+median(gluIndicesRCT_BGM_FU$gluBelow70)
+median(gluIndicesRCT_CGM_Baseline$gluBelow70)
+median(gluIndicesRCT_CGM_FU$gluBelow70)
+
+```
+
+## cgmAnalysisRCT
+
+```{r}
+# CGM data used in the RCT
+# n=1920863: 1920863 / 203 (patients) * 5 (minutes for each measurement) / 1440 (mins/day) = 32 days of CGM/patient
+```
+
+## Patient Exploration (63)
+
+```{r}
+# Patient has only run-in readings, hypothesized by the below averages 
+num = 204 
+
+patient_num <- DeviceCGM %>% filter(PtID == num)
+#patient_num <- cgmAnalysisRCT %>% filter(PtID == num) 
+#patient_num <- cgmAnalysisEXT %>% filter(PtID == num) 
+
+# 63 - ?
+# 163 - missing data makes sense - see PtFinalStat
+# 164, 153, 204 - CGM - nonetheless huge gaps in data
+# 78 - regular BGM
+# 204 - why difference between RCT and full data?
+
+ggplot(data = patient_num, aes(x = date, y = Value)) +
+  geom_line() +
+  geom_point(size = 0.5)
+
+#min(patient_num$date)
+#max(patient_num$date)
+#patient_num_all <- DeviceCGM %>% filter(PtID == num)
+#quantile(patient_num_all$date, c(0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1))
+```
+
+## Questionnaires
+
+```{r}
+questionnaires <- read.table("./data/questionnaires.txt", header = TRUE, sep = "|")
+
+n <- length(unique(cgmAnalysisRCT$PtID))
+
+readings_per_patient <- cgmAnalysisRCT %>%
+  group_by(PtID, visit) %>%
+  summarise(n())
+```
+
+## Creating Dataset
+
+```{r}
+gluOutcomes70 <- gluIndicesRCT %>%
+  filter(time == "1) Overall" & period == "2) Follow-up (26 week)")
+
+gluCovariates70 <- gluIndicesRCT %>%
+  filter(time == "1) Overall" & period == "1) Baseline")
+
+(gluOutcomes70 %>% filter(TrtGroup == "CGM"))$gluBelow70
+```
+
