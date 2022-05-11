@@ -53,9 +53,19 @@ maxlen = 10L
 results_len10 <- run.decisionlist.cv.inner(dat = dat_clean_XAY_full, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
 colMeans(results_len10)
 
+set.seed(2)
+maxlen = 12L
+results_len12 <- run.decisionlist.cv.inner(dat = dat_clean_XAY_full, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
+colMeans(results_len12)
+
+set.seed(2)
+maxlen = 14L
+results_len14 <- run.decisionlist.cv.inner(dat = dat_clean_XAY_full, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
+colMeans(results_len14)
+
 # Decision List K-Fold CV
 set.seed(2)
-maxlen = 1L
+maxlen = 6L
 results <- run.decisionlist.cv(dat = dat_clean_XAY_full, cv_folds = cv_folds, K = K, maxlen = maxlen)
 colMeans(results)
 mean((dat_clean_XAY_full %>% filter(TrtGroup == "CGM"))$gluBelow70Chg)
@@ -70,6 +80,6 @@ train_X <- model.matrix(~., dat_clean_XAY_full %>% select(-all_of(nonFeatureVars
 train_X <- train_X[, 2:ncol(train_X)]
 
 set.seed(2)
-dtr.out <- listdtr(train_Y, train_A, train_X, stage.x = rep(1, ncol(train_X)), maxlen = 3L)
+dtr.out <- listdtr(train_Y, train_A, train_X, stage.x = rep(1, ncol(train_X)), maxlen = 6L)
 print(dtr.out)
 b <- table(predict(dtr.out, train_X, stage = 1))

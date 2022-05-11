@@ -39,7 +39,7 @@ colMeans(results_depth3)
 
 # Policy Tree K-Fold CV
 set.seed(2)
-depth = 1
+depth = 2
 results <- run.policytree.cv(dat = dat_clean_XAY_full, cv_folds = cv_folds, K = K, depth = depth)
 colMeans(results)
 mean((dat_clean_XAY_full %>% filter(TrtGroup == "CGM"))$gluBelow70Chg)
@@ -50,7 +50,7 @@ mean((dat_clean_XAY_full %>% filter(TrtGroup == "CGM"))$gluBelow70Chg)
 
 
 # Trained on all data
-depth = 1
+depth = 2
 nonFeatureVars <- c("TrtGroup", "gluBelow70Chg")
 dat_train_X_with_intercept <- model.matrix(~., dat_clean_XAY_full %>% select(-all_of(nonFeatureVars)))
 dat_train_X <- dat_train_X_with_intercept[, 2:ncol(dat_train_X_with_intercept)]
