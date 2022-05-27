@@ -12,7 +12,10 @@ DiabSocioEcon <- read.table("data/study data/DiabSocioEcon.txt", header = TRUE, 
 DiabLocalHbA1c <- read.table("data/study data/DiabLocalHbA1c.txt", header = TRUE, sep = "|", fileEncoding = "UTF-16")
 DiabPhysExam <- read.table("data/study data/DiabPhysExam.txt", header = TRUE, sep = "|", fileEncoding = "UTF-16")
 gluIndicesRCT <- read.table("data/study data/gluIndices RCT.txt", header = TRUE, sep = "|") %>%
-  mutate(gluBelow70 = parse_number(as.character(gluBelow70)))
+  mutate(gluBelow70 = parse_number(as.character(gluBelow70))) %>%
+  #mutate(gluAbove180 = parse_number(as.character(gluAbove180))) %>%
+  mutate(gluInRange = parse_number(as.character(gluInRange)))
+STASampleResults <- read.table("data/study data/STASampleResults.txt", header = TRUE, sep = "|", fileEncoding = "UTF-16")
 
 # Table 1: Baseline Characteristics
   # [PtRoster] Age
@@ -23,7 +26,7 @@ gluIndicesRCT <- read.table("data/study data/gluIndices RCT.txt", header = TRUE,
   # [DiabSocioEcon] Annual HH income
   # [DiabSocioEcon] Highest education
   # [DiabSocioEcon] Health insurance
-  # [DiabScreening$CGMUseStat] CGM use (past vs never)
+  # [DiabScreening$CGMUseStat] CGM use (past vs never) - NOT USED
   # [DiabScreening$PumpUse] Insulin pump use (both InsModPump and PumpUse have 111 users in DiabScreening whereas paper says 58+50)
   # [DiabLocalHbA1c] Screening Hba1c (filter for Visit=="Screening")
   # [????] Hba1c at randomization
@@ -60,12 +63,12 @@ patients <- (gluIndicesRCT %>% filter(period == "1) Baseline" & time == "1) Over
 # Variable Collection
 dat_raw_X <- select(PtRoster, RecID, PtID, SiteID, AgeAsOfEnrollDt) %>%
   filter(PtID %in% patients) %>%
-  left_join(select(DiabScreening, PtID, DiagAge, Gender, Ethnicity, Race, CGMUseStat, PumpUse, SHNumLast12Months, DKANumLast12Months), by = "PtID") %>%
+  left_join(select(DiabScreening, PtID, DiagAge, Gender, Ethnicity, Race, PumpUse, SHNumLast12Months, DKANumLast12Months), by = "PtID") %>%
   left_join(select(DiabSocioEcon, PtID, EducationLevel, AnnualIncome, InsPrivate, InsMedicare), by = "PtID") %>%
   left_join(select(DiabLocalHbA1c %>% filter(Visit == "Screening"), PtID, HbA1cTestRes), by = "PtID") %>%
   left_join(select(DiabScreening, PtID, UnitsInsTotal), by = "PtID") %>%
   left_join(select(DiabPhysExam %>% filter(Visit == "Screening"), PtID, Weight, WeightUnits), by = "PtID") %>%
-  left_join(select(gluIndicesRCT %>% filter(period == "1) Baseline" & time == "1) Overall"), PtID, gluBelow70, gluCV), by = "PtID")
+  left_join(select(gluIndicesRCT %>% filter(period == "1) Baseline" & time == "1) Overall"), PtID, gluBelow70, gluCV, gluInRange), by = "PtID")
 
 # Data Manipulation
 less_bach <- c("12th grade - no diploma", "Associate Degree (AA)",
@@ -100,3 +103,16 @@ dat_clean_XAY <- dat_clean_X %>%
 
 dat_clean_XAY_full <- na.omit(dat_clean_XAY)
 #saveRDS(dat_clean_XAY_full, "./data/dat_clean_XAY_full.rds")
+
+# Dataset with C-Pep included
+cpep_info <- STASampleResults %>%
+  filter(Visit == "Randomization", ResultName == "CPEP", STAResultStatus != "Canceled")
+cpep_info$PtID <- as.character(cpep_info$PtID)
+
+dat_clean_XAY_full_2 <- rownames_to_column(dat_clean_XAY_full) %>%
+  left_join(select(cpep_info, PtID, Value), by = c("rowname" = "PtID")) %>%
+  rename(CPep_value = Value) %>%
+  mutate(CPep_detected = ifelse(CPep_value == "<0.003", "no", "yes")) %>%
+  select(!c(CPep_value)) %>%
+  column_to_rownames("rowname")
+#saveRDS(dat_clean_XAY_full_2, "./data/dat_clean_XAY_full_2.rds")
