@@ -1,9 +1,8 @@
 source("./scripts/F10CV_base.R")
 source("./scripts/F21policy_tree.R")
 dat_clean_XAY_full <- readRDS("./data/dat_clean_XAY_full.rds")
-dat_clean_XAY_full_2 <- readRDS("./data/dat_clean_XAY_full_2.rds")
 
-dat <- dat_clean_XAY_full_2
+dat <- dat_clean_XAY_full
 
 # CV folds setup
 set.seed(1)
@@ -45,12 +44,10 @@ set.seed(2)
 depth = 1
 results <- run.policytree.cv(dat = dat, cv_folds = cv_folds, K = K, depth = depth)
 colMeans(results)
-mean((dat %>% filter(TrtGroup == "CGM"))$gluBelow70Chg)
-
-
-
-
-
+#mean((dat %>% filter(TrtGroup == "CGM"))$gluBelow70Chg)
+sd(results[,2]) / sqrt(5) # Optimal
+sd(results[,3]) / sqrt(5) # CGM-Only
+sd(results[,4]) / sqrt(5) # BGM-Only
 
 # Trained on all data
 depth = 1

@@ -16,6 +16,10 @@ gluIndicesRCT <- read.table("data/study data/gluIndices RCT.txt", header = TRUE,
   #mutate(gluAbove180 = parse_number(as.character(gluAbove180))) %>%
   mutate(gluInRange = parse_number(as.character(gluInRange)))
 STASampleResults <- read.table("data/study data/STASampleResults.txt", header = TRUE, sep = "|", fileEncoding = "UTF-16")
+# Dataset with C-Pep included
+cpep_info <- STASampleResults %>%
+  filter(Visit == "Randomization", ResultName == "CPEP", STAResultStatus != "Canceled")
+#cpep_info$PtID <- as.character(cpep_info$PtID)
 
 # Table 1: Baseline Characteristics
   # [PtRoster] Age
@@ -68,7 +72,8 @@ dat_raw_X <- select(PtRoster, RecID, PtID, SiteID, AgeAsOfEnrollDt) %>%
   left_join(select(DiabLocalHbA1c %>% filter(Visit == "Screening"), PtID, HbA1cTestRes), by = "PtID") %>%
   left_join(select(DiabScreening, PtID, UnitsInsTotal), by = "PtID") %>%
   left_join(select(DiabPhysExam %>% filter(Visit == "Screening"), PtID, Weight, WeightUnits), by = "PtID") %>%
-  left_join(select(gluIndicesRCT %>% filter(period == "1) Baseline" & time == "1) Overall"), PtID, gluBelow70, gluCV, gluInRange), by = "PtID")
+  left_join(select(gluIndicesRCT %>% filter(period == "1) Baseline" & time == "1) Overall"), PtID, gluBelow70, gluCV, gluInRange), by = "PtID") %>%
+  left_join(select(cpep_info, PtID, Value), by = c("PtID"))
 
 # Data Manipulation
 less_bach <- c("12th grade - no diploma", "Associate Degree (AA)",
@@ -92,8 +97,9 @@ dat_clean_X <- dat_raw_X %>%
          Ins_Combined = ifelse(is.na(InsPrivate), "Medicare/other",
                                ifelse(!is.na(InsPrivate) & is.na(InsMedicare), "Private",
                                       ifelse(!is.na(InsPrivate) & !is.na(InsMedicare), "Private and Medicare", NA))),
-         gluCV_num = readr::parse_number(as.character(gluCV))) %>%
-  select(!c(RecID, SiteID, Ethnicity, Race, PumpUse, SHNumLast12Months, DKANumLast12Months, EducationLevel, AnnualIncome, InsPrivate, InsMedicare, UnitsInsTotal, Weight, WeightUnits, gluCV, Weight_Kg))
+         gluCV_num = readr::parse_number(as.character(gluCV)),
+         CPep_detected = ifelse(Value == "<0.003", "no", "yes")) %>%
+  select(!c(RecID, SiteID, Ethnicity, Race, PumpUse, SHNumLast12Months, DKANumLast12Months, EducationLevel, AnnualIncome, InsPrivate, InsMedicare, UnitsInsTotal, Weight, WeightUnits, gluCV, Weight_Kg, Value))
 
 dat_clean_XAY <- dat_clean_X %>%
   left_join(select(PtRoster, PtID, TrtGroup), by = "PtID") %>%
@@ -101,18 +107,20 @@ dat_clean_XAY <- dat_clean_X %>%
   mutate(gluBelow70Chg = -gluBelow70Chg) %>% # Changed so that "better" values (more negative gluBelow70Chg) are positive
   column_to_rownames("PtID")
 
+dat_clean_XAY <- dat_clean_XAY[,!(names(dat_clean_XAY) %in% c("InsulinDosesKg"))]
+
 dat_clean_XAY_full <- na.omit(dat_clean_XAY)
 #saveRDS(dat_clean_XAY_full, "./data/dat_clean_XAY_full.rds")
 
-# Dataset with C-Pep included
-cpep_info <- STASampleResults %>%
-  filter(Visit == "Randomization", ResultName == "CPEP", STAResultStatus != "Canceled")
-cpep_info$PtID <- as.character(cpep_info$PtID)
-
-dat_clean_XAY_full_2 <- rownames_to_column(dat_clean_XAY_full) %>%
-  left_join(select(cpep_info, PtID, Value), by = c("rowname" = "PtID")) %>%
-  rename(CPep_value = Value) %>%
-  mutate(CPep_detected = ifelse(CPep_value == "<0.003", "no", "yes")) %>%
-  select(!c(CPep_value)) %>%
-  column_to_rownames("rowname")
-#saveRDS(dat_clean_XAY_full_2, "./data/dat_clean_XAY_full_2.rds")
+# # Dataset with C-Pep included
+# cpep_info <- STASampleResults %>%
+#   filter(Visit == "Randomization", ResultName == "CPEP", STAResultStatus != "Canceled")
+# cpep_info$PtID <- as.character(cpep_info$PtID)
+# 
+# dat_clean_XAY_full_2 <- rownames_to_column(dat_clean_XAY_full) %>%
+#   left_join(select(cpep_info, PtID, Value), by = c("rowname" = "PtID")) %>%
+#   rename(CPep_value = Value) %>%
+#   mutate(CPep_detected = ifelse(CPep_value == "<0.003", "no", "yes")) %>%
+#   select(!c(CPep_value)) %>%
+#   column_to_rownames("rowname")
+# #saveRDS(dat_clean_XAY_full_2, "./data/dat_clean_XAY_full_2.rds")

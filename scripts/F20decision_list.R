@@ -4,8 +4,8 @@ select <- dplyr::select
 
 run.decisionlist.cv <- function(dat, cv_folds, K, maxlen) {
   nonFeatureVars <- c("TrtGroup", "gluBelow70Chg")
-  fold_val <- matrix(data = NA, nrow = K, ncol = 3)
-  colnames(fold_val) <- c("train", "test", "cgm_test")
+  fold_val <- matrix(data = NA, nrow = K, ncol = 4)
+  colnames(fold_val) <- c("train", "test", "cgm_test", "bgm_test")
   for (k in 1:K) {
     # 1. Preprocessing
     dat_train_Y <- as.matrix(dat$gluBelow70Chg[train_folds[[k]]])
@@ -28,11 +28,13 @@ run.decisionlist.cv <- function(dat, cv_folds, K, maxlen) {
     train_value <- mean(dat_train_Y[dat_train_A == dat_train_A_pred])
     test_value <- mean(dat_test_Y[dat_test_A == dat_test_A_pred])
     cgm_value <- mean(dat_test_Y[dat_test_A == "CGM"])
+    bgm_value <- mean(dat_test_Y[dat_test_A == "BGM"])
     
     print(k)
     fold_val[k, 1] <- train_value
     fold_val[k, 2] <- test_value
     fold_val[k, 3] <- cgm_value
+    fold_val[k, 4] <- bgm_value
     #print(fold_val)
   }
   return(fold_val)

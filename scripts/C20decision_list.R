@@ -1,9 +1,8 @@
 source("./scripts/F10CV_base.R")
 source("./scripts/F20decision_list.R")
 dat_clean_XAY_full <- readRDS("./data/dat_clean_XAY_full.rds")
-dat_clean_XAY_full_2 <- readRDS("./data/dat_clean_XAY_full_2.rds")
 
-dat <- dat_clean_XAY_full_2
+dat <- dat_clean_XAY_full
 
 # CV folds setup
 set.seed(1)
@@ -41,37 +40,12 @@ maxlen = 4L
 results_len4 <- run.decisionlist.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
 colMeans(results_len4)
 
-set.seed(2)
-maxlen = 6L
-results_len6 <- run.decisionlist.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
-colMeans(results_len6)
-
-set.seed(2)
-maxlen = 8L
-results_len8 <- run.decisionlist.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
-colMeans(results_len8)
-
-set.seed(2)
-maxlen = 10L
-results_len10 <- run.decisionlist.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
-colMeans(results_len10)
-
-set.seed(2)
-maxlen = 12L
-results_len12 <- run.decisionlist.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
-colMeans(results_len12)
-
-set.seed(2)
-maxlen = 14L
-results_len14 <- run.decisionlist.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, maxlen = maxlen)
-colMeans(results_len14)
-
 # Decision List K-Fold CV
 set.seed(2)
-maxlen = 6L
+maxlen = 1L
 results <- run.decisionlist.cv(dat = dat, cv_folds = cv_folds, K = K, maxlen = maxlen)
 colMeans(results)
-mean((dat %>% filter(TrtGroup == "CGM"))$gluBelow70Chg)
+#mean((dat %>% filter(TrtGroup == "CGM"))$gluBelow70Chg)
 
 
 # Trained on all data
