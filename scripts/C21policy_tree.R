@@ -1,3 +1,9 @@
+### C21policy_tree.R
+### 
+### Working Directory = "WISDM-Precision-Medicine/"
+### Dependencies: 
+### Author: Kushal Shah
+
 source("./scripts/F10CV_base.R")
 source("./scripts/F21policy_tree.R")
 dat_clean_XAY_full <- readRDS("./data/dat_clean_XAY_full.rds")
@@ -18,11 +24,6 @@ cv_folds_inner <- list(K)
 for (k in 1:K) {
   cv_folds_inner[[k]] <- cv.folds(n = NA, K, is.inner = TRUE, outer_set = train_folds[[k]])  
 }
-
-# Checks
-# c(cv_folds_inner[[1]]$test[[1]], cv_folds_inner[[1]]$train[[1]]) %in% train_folds[[1]] # all true
-# c(cv_folds_inner[[1]]$test[[2]], cv_folds_inner[[1]]$train[[2]]) %in% train_folds[[1]] # all true
-# c(cv_folds_inner[[2]]$test[[1]], cv_folds_inner[[2]]$train[[1]]) %in% train_folds[[1]] # shouldn't all be true
 
 # Policy Tree K-Fold Inner CV for Parameter Tuning
 set.seed(2)
