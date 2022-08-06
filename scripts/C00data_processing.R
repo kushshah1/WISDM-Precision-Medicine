@@ -45,22 +45,6 @@ cpep_info <- STASampleResults %>%
   # Wear hearing aids regularly
   # Near vision card last line worse than 20/40
 
-# eTable 16: Subgroup Analysis by Baseline Characteristics
-  # [already covered] Age
-  # [already covered] T1D Duration
-  # [already covered] Age at diagnosis
-  # [gluIndicesRCT$gluBelow70 where period == "1) Baseline", time == "1) Overall"] Percent time <70
-  # [gluIndicesRCT$gluCV where period == "1) Baseline", time == "1) Overall"] Coefficient of Variation
-  # [?????] HbA1c (screening/randomization/different?)
-  # [already covered] Gender
-  # [already covered] Race/ethnicity
-  # [already covered] Highest education completed
-  # [already covered] NIH Toolbox age-corrected fluid composite score
-  # [already covered] Cognition status measured by the NIH toolbox
-  # [already covered] Hypoglycemic awareness
-  # [already covered] Detectable C-peptide
-  # [already covered] Severe hypo event past 12 months
-
 # patients <- DiabScreening$PtID #213 
 patients <- (gluIndicesRCT %>% filter(period == "1) Baseline" & time == "1) Overall"))$PtID # 203
 
@@ -108,19 +92,5 @@ dat_clean_XAY <- dat_clean_X %>%
   column_to_rownames("PtID")
 
 dat_clean_XAY <- dat_clean_XAY[,!(names(dat_clean_XAY) %in% c("InsulinDosesKg"))]
-
 dat_clean_XAY_full <- na.omit(dat_clean_XAY)
 #saveRDS(dat_clean_XAY_full, "./data/dat_clean_XAY_full.rds")
-
-# # Dataset with C-Pep included
-# cpep_info <- STASampleResults %>%
-#   filter(Visit == "Randomization", ResultName == "CPEP", STAResultStatus != "Canceled")
-# cpep_info$PtID <- as.character(cpep_info$PtID)
-# 
-# dat_clean_XAY_full_2 <- rownames_to_column(dat_clean_XAY_full) %>%
-#   left_join(select(cpep_info, PtID, Value), by = c("rowname" = "PtID")) %>%
-#   rename(CPep_value = Value) %>%
-#   mutate(CPep_detected = ifelse(CPep_value == "<0.003", "no", "yes")) %>%
-#   select(!c(CPep_value)) %>%
-#   column_to_rownames("rowname")
-# #saveRDS(dat_clean_XAY_full_2, "./data/dat_clean_XAY_full_2.rds")
