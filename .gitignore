@@ -1,4 +1,6 @@
+# Project Specific
 data/
+C00data_readin.R
 
 # History files
 .Rhistory
