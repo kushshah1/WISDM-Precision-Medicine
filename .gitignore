@@ -1,6 +1,7 @@
 # Project Specific
 data/
 C00data_readin.R
+exploration-questions.Rmd
 
 # History files
 .Rhistory
