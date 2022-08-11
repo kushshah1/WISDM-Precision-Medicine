@@ -80,8 +80,8 @@ run.policytree.cv <- function(dat, cv_folds, K, depth) {
 #' 
 run.policytree.cv.inner <- function(dat, cv_folds_inner, K, L, depth) {
   nonFeatureVars <- c("TrtGroup", "gluBelow70Chg")
-  fold_val_inner <- matrix(data = NA, nrow = K*L, ncol = 3)
-  colnames(fold_val_inner) <- c("train_train", "train_test", "cgm_train_test")
+  fold_val_inner <- matrix(data = NA, nrow = K*L, ncol = 2)
+  colnames(fold_val_inner) <- c("train_train", "train_test")
   m = 0
   
   # Fitting algorithm on K*L inner training folds and estimating value on K*L inner testing folds
@@ -125,7 +125,7 @@ run.policytree.cv.inner <- function(dat, cv_folds_inner, K, L, depth) {
       print(m)
       fold_val_inner[m, 1] <- train_value
       fold_val_inner[m, 2] <- test_value
-      fold_val_inner[m, 3] <- cgm_value
+      #fold_val_inner[m, 3] <- cgm_value
     }
   }
   return(fold_val_inner)

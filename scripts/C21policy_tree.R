@@ -28,26 +28,31 @@ set.seed(2)
 
 depth = 1
 results_depth1 <- run.policytree.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, depth = depth)
-colMeans(results_depth1)
 
 depth = 2
 results_depth2 <- run.policytree.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, depth = depth)
-colMeans(results_depth2)
 
 depth = 3
 results_depth3 <- run.policytree.cv.inner(dat = dat, cv_folds_inner = cv_folds_inner, K = K, L = L, depth = depth)
-colMeans(results_depth3)
+
+policy_tree_CV <- as.data.frame(rbind(c("Policy Tree", 1, colMeans(results_depth1)), c("Policy Tree", 2, colMeans(results_depth2)), 
+                        c("Policy Tree", 3, colMeans(results_depth3))))
+colnames(policy_tree_CV) <- c("Model", "Depth", "Training Set Value", "Inner Validation Set Value")
+#saveRDS(policy_tree_CV, "./data/policy_tree_CV.rds")
 
 # Policy Tree K-Fold Outer CV for Evaluation of Optimal Model
 set.seed(2)
 depth = 1
 results <- run.policytree.cv(dat = dat, cv_folds = cv_folds, K = K, depth = depth)
-colMeans(results) # Outer set training and testing (held-out) value estimate of optimal rule, along with value estimate of CGM-only and BGM-only rules on the same held-out test set
 
-# SD of optimal rule, CGM-only, and BGM-only
-sd(results[,2]) / sqrt(5) # Optimal
-sd(results[,3]) / sqrt(5) # CGM-Only
-sd(results[,4]) / sqrt(5) # BGM-Only
+values <- colMeans(results) # Outer set training/testing (held-out) value estimates of opt rule + value estimate of CGM-only and BGM-only rules on same held-out test set
+SEs <- sapply(as.data.frame(results), sd) / sqrt(K) # SE of optimal rule (train/test), CGM-only, and BGM-only
+optimal_CV <- rbind(values, SEs)
+colnames(optimal_CV) <- c("Optimal Method - Training", "Optimal Method - Test",
+                             "CGM-Only - Test", "BGM-Only - Test")
+rownames(optimal_CV) <- c("Value Estimate", "SE")
+#saveRDS(optimal_CV, "./data/optimal_CV.rds")
+
 
 ### Outputted final decision rule, trained on all data ###
 
@@ -62,7 +67,7 @@ sd(results[,4]) / sqrt(5) # BGM-Only
   dat_train_A_replaceBGM <- replace(dat_train_A_replaceCGM, dat_train_A_replaceCGM == "BGM", 0)
   dat_train_A_numeric <- as.numeric(dat_train_A_replaceBGM)
   
-  # 2. Visualization of Final Rule
+  # 2. Visualization of Final Rule (DiagrammeR used here)
   cf <- grf::causal_forest(X = dat_train_X, Y = dat_train_Y, W = dat_train_A_numeric)
   dr <- double_robust_scores(cf)
   tree.out = policy_tree(dat_train_X, dr, depth = depth)
@@ -77,6 +82,6 @@ sd(results[,4]) / sqrt(5) # BGM-Only
 
 
 # Creating dataset with column of optimal predicted treatments added
-dat_with_opt_trt <- dat
-dat_with_opt_trt$opt <- predict(tree.out, newdata = dat_train_X)
-#saveRDS(dat_with_opt_trt, "./data/dat_with_opt_trt.rds")
+dat_opt <- dat
+dat_opt$opt <- predict(tree.out, newdata = dat_train_X)
+#saveRDS(dat_opt, "./data/dat_opt.rds")
