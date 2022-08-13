@@ -21,7 +21,7 @@ This repository contains an end-to-end precision medicine workflow which estimat
   
 ## Data Availability
 
-All data used in this analysis is publicly available through the Jaeb Center for Health Research (JCHR) and can be accessed in two ways:
+All data used in this analysis are publicly available through the Jaeb Center for Health Research ([JCHR](https://www.jaeb.org/)) and can be accessed in two ways:
 1. Direct link: https://public.jaeb.org/dataset/564
 2. Visit https://public.jaeb.org/datasets/diabetes and click `WISDMPublicDataset.zip' 
 
