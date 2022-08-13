@@ -29,7 +29,7 @@ All data used in this analysis is publicly available through the Jaeb Center for
 1. Create the following empty folders from the root directory: `/data` and `/data/study data`
 2. Download study data, unzip, and copy all text files into the `study data` folder
 3. Run `C00data_processing.R`, which will output a clean dataset (`dat_clean_XAY_full.rds`) into `/data`
-4. Run `C20decision_list.R` and `C21policy_tree.R`, which will output the following into `/data`
+4. Run `C20decision_list.R` and `C21policy_tree.R`, which will output the following into `/data`:
     - `decision_list_CV.rds`: Cross validation results for decision lists with different depth parameters
     - `policy_tree_CV.rds`: Cross validation results for policy trees with different depth parameters
     - `optimal_CV.rds`: Held-out test set cross validation result for optimal decision rule, CGM-only rule, and BGM-only rule
