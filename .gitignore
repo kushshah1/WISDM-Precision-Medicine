@@ -1,5 +1,6 @@
 # Project Specific
 data/*
+data2/*
 C00data_readin.R
 exploration-questions.Rmd
 C99_removed.R
