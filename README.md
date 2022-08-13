@@ -48,7 +48,7 @@ All data used in this analysis is publicly available through the Jaeb Center for
   - Outputs: `policy_tree_CV.rds`, `optimal_CV.rds`, `dat_opt.rds`
   - Plots optimal decision rule (a policy tree with depth = 1)
 - `scripts/C30results.R`:
-  - Dependencies: Study data in `data/study data`
+  - Dependencies: `dat_clean_XAY_full`, `dat_opt`, `decision_list_CV`, `policy_tree_CV`, study data in `data/study data`
   - Outputs:
     - [figure] Difference in CGM vs. BGM treatment effect on outcome (by baseline %CV)
     - [table] Characteristics of study particiapnts (stratified by decision rule subgroup)
