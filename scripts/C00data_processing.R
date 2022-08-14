@@ -72,5 +72,5 @@ select <- dplyr::select
   # 2 missing education data
   dat_clean_XAY_full <- na.omit(dat_clean_XAY)
   
-#saveRDS(dat_clean_XAY_full, "./data/dat_clean_XAY_full.rds")
+saveRDS(dat_clean_XAY_full, "./data/dat_clean_XAY_full.rds")
   

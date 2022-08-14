@@ -44,4 +44,4 @@ results_len4 <- run.decisionlist.cv.inner(dat = dat, cv_folds_inner = cv_folds_i
 decision_list_CV <- as.data.frame(rbind(c("Decision List", 1, colMeans(results_len1)), c("Decision List", 2, colMeans(results_len2)), 
                           c("Decision List", 3, colMeans(results_len3)), c("Decision List", 4, colMeans(results_len4))))
 colnames(decision_list_CV) <- c("Model", "Depth", "Training Set Value", "Inner Validation Set Value")
-#saveRDS(decision_list_CV, "./data/decision_list_CV.rds")
+saveRDS(decision_list_CV, "./data/decision_list_CV.rds")

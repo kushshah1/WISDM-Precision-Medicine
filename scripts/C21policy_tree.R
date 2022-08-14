@@ -51,7 +51,7 @@ optimal_CV <- rbind(values, SEs)
 colnames(optimal_CV) <- c("Optimal Method - Training", "Optimal Method - Test",
                              "CGM-Only - Test", "BGM-Only - Test")
 rownames(optimal_CV) <- c("Value Estimate", "SE")
-#saveRDS(optimal_CV, "./data/optimal_CV.rds")
+saveRDS(optimal_CV, "./data/optimal_CV.rds")
 
 
 ### Outputted final decision rule, trained on all data ###
@@ -84,4 +84,4 @@ rownames(optimal_CV) <- c("Value Estimate", "SE")
 # Creating dataset with column of optimal predicted treatments added
 dat_opt <- dat
 dat_opt$opt <- predict(tree.out, newdata = dat_train_X)
-#saveRDS(dat_opt, "./data/dat_opt.rds")
+saveRDS(dat_opt, "./data/dat_opt.rds")
