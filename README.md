@@ -51,7 +51,7 @@ All data used in this analysis are publicly available through the Jaeb Center fo
   - Dependencies: `dat_clean_XAY_full`, `dat_opt`, `decision_list_CV`, `policy_tree_CV`, study data in `data/study data`
   - Outputs:
     - [figure] Difference in CGM vs. BGM treatment effect on outcome (by baseline %CV)
-    - [table] Characteristics of study particiapnts (stratified by decision rule subgroup)
+    - [table] Characteristics of study participants (stratified by decision rule subgroup)
     - [table] All cross validation results for parameter tuning and optimal final model
 - `scripts/F10CV_base.R`: Supporting file containing functions to create splits for inner and outer training/testing folds (nested K-fold cross validation)
 - `scripts/F20decision_list.R`: Supporting file containing functions to fit decision list algorithm and calculate cross validated value estimates of resulting decision rule
