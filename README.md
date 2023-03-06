@@ -3,6 +3,8 @@ Individualized treatment rule (ITR) estimation for the WISDM T1D clinical trial 
 
 Kahkoska, A. R., Shah, K. S., Kosorok, M. R., Miller, K. M., Rickels, M. R., Weinstock, R. S., Young, L., & Pratley, R. (in press). Estimation of a machine learning-based decision rule to understand heterogeneous effects of continuous glucose monitoring on hypoglycemia among older adults with type 1 diabetes: A post-hoc analysis of the WISDM study. *Journal of Diabetes Science and Technology*.
 
+This repository currently contains code to reproduce analyses related to the secondary outcome of the paper: change in CGM-measured percentage of time spent in hypoglycemic range (<70 mg/dL) between baseline and follow-up.
+
 ## Introduction
 This repository contains an end-to-end precision medicine workflow which estimates an individualized treatment rule (ITR) for older adults with type 1 diabetes (T1D). In this trial, continuous glucose monitoring (CGM) was compared with traditional blood glucose monitoring (BGM) for its effect on hypoglycemia (reduction in time spent in hypoglycemia, defined as blood glucose < 70 mg/dL).
 
